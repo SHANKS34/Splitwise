@@ -2,7 +2,8 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const dbURI = process.env.DB_URL;
+    const dbURI = process.env.MONGO_URI;
+    console.log("DB" , dbURI)
     if (!dbURI) {
       console.error('Error: DB_URL environment variable is not defined.');
       process.exit(1);

@@ -18,6 +18,7 @@ function Group() {
     const fetchGroupDetails = async () => {
         try {
             const response = await fetch(`http://localhost:8080/splitwise/group/${groupId}`);
+            console.log("Response " , response);
             const data = await response.json();
             
             if (response.ok) {

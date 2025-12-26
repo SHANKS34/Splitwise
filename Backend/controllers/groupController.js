@@ -14,8 +14,7 @@ export const getGroupDetails = async (req, res) => {
 
         const expenses = await ExpenseModel.find({ group: groupId });
         const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-        
-
+    
         res.status(200).json({ 
             group: group,
             totalAmount: totalAmount 
