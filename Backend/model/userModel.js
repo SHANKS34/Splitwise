@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-    // 1. ADD THIS FIELD
     userId: {
         type: String,
         required: true,

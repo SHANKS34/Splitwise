@@ -7,12 +7,42 @@ const GroupSchema = new mongoose.Schema({
     },
     members: [{ 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Users' // Links to your User model
+        ref: 'Users' 
     }],
     createdBy: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Users' 
     },
+    balances: [{
+        user: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Users',
+            required: true
+        },
+        amount: { 
+            type: Number, 
+            default: 0 
+        }
+    }],
+
+    transactions: [{
+        user: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Users', 
+            required: true 
+        },
+        moneyRelation: [{
+            user: { 
+                type: mongoose.Schema.Types.ObjectId, 
+                ref: 'Users', 
+                required: true 
+            }, 
+            amount: { 
+                type: Number, 
+                default: 0 
+            } 
+        }]
+    }],
     createdAt: { 
         type: Date, 
         default: Date.now 

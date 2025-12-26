@@ -1,10 +1,9 @@
 import { oauth2client } from "../utils/googleConfig.js";
 import UserModel from "../model/userModel.js";
 import jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid'; // 1. IMPORT UUID
+import { v4 as uuidv4 } from 'uuid';
 
 export const googleAuth = (req, res) => {
-    // ... (This function stays the same) ...
     const scopes = [
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/userinfo.profile'
@@ -36,11 +35,10 @@ export const googleLogin = async (req, res) => {
         let user = await UserModel.findOne({ email: email });
         
         if (!user) {
-            // 2. GENERATE UUID FOR NEW USER
             const newUserId = uuidv4(); 
             
             user = await UserModel.create({ 
-                userId: newUserId, // Save it here
+                userId: newUserId,
                 googleId, 
                 email, 
                 name, 
@@ -50,8 +48,8 @@ export const googleLogin = async (req, res) => {
 
         const appToken = jwt.sign(
             { 
-                _id: user._id,      // MongoDB ID (internal use)
-                userId: user.userId, // Your Public UUID
+                _id: user._id,     
+                userId: user.userId, 
                 email: user.email,
                 name: user.name,
                 picture: user.profilePicture,

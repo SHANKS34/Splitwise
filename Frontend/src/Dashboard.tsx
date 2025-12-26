@@ -1,36 +1,30 @@
 import React, { useEffect, useState } from 'react'
-import type { User, Group } from './interfaces' // Ensure Group is exported in your interfaces file
+import type { User, Group } from './interfaces' 
 import { useNavigate } from 'react-router-dom';
 function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   
-  // New State for Groups
   const [myGroups, setMyGroups] = useState<Group[]>([]);
 
-  // Search States
   const [searchEmail, setSearchEmail] = useState("");
   const [searchResult, setSearchResult] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
  const navigate = useNavigate();
-  // Group Creation States
   const [groupName, setGroupName] = useState("");
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
 
-  // 1. Load User & Fetch Groups
   useEffect(() => {
     const storedData = localStorage.getItem('user');
     if (storedData) {
         const parsedUser = JSON.parse(storedData);
         setUser(parsedUser);
 
-        // Fetch groups immediately if we have a userId
         if (parsedUser.userId) {
             fetchMyGroups(parsedUser.userId);
         }
     }
   }, []);
 
-  // 2. Function to Fetch Groups from Backend
   const fetchMyGroups = async (userId: string) => {
       try {
           const response = await fetch(`http://localhost:8080/splitwise/groups/${userId}`);
@@ -43,7 +37,6 @@ function Dashboard() {
       }
   }
 
-  // 3. Search for a user
   const handleSearchUser = async () => {
     if (!searchEmail) return;
     setLoading(true);
@@ -69,7 +62,6 @@ function Dashboard() {
     }
   };
 
-  // 4. Add searched user to the temporary list
   const addUserToGroupList = () => {
       if (searchResult) {
           if (groupMembers.some(m => m.email === searchResult.email)) {
@@ -87,7 +79,6 @@ function Dashboard() {
       }
   }
 
-  // 5. Send Data to Backend to Create Group
   const handleCreateGroup = async () => {
     if (!groupName || !user?.userId) {
         alert("Please enter a group name");
@@ -114,7 +105,6 @@ function Dashboard() {
             setGroupName("");
             setGroupMembers([]);
             
-            // REFRESH THE LIST AUTOMATICALLY
             fetchMyGroups(user.userId);
         } else {
             alert("Error: " + data.message);
@@ -129,10 +119,8 @@ function Dashboard() {
   return (
     <div className='relative min-h-screen bg-gray-100 p-8'>
       
-      {/* Main Layout: Flex Container for Left and Right columns */}
       <div className='flex flex-col md:flex-row gap-8 items-start justify-center max-w-6xl mx-auto'>
 
-        {/* --- LEFT COLUMN: CREATE GROUP CARD --- */}
         <div className='bg-white p-6 rounded-xl shadow-md w-full md:w-1/3'>
             <h2 className='text-2xl font-bold mb-4 text-gray-800'>Create a Group</h2>
             
@@ -198,7 +186,6 @@ function Dashboard() {
             </button>
         </div>
 
-        {/* --- RIGHT COLUMN: MY GROUPS LIST --- */}
         <div className='w-full md:w-2/3'>
             <h2 className='text-2xl font-bold mb-6 text-gray-800'>My Groups</h2>
             
@@ -248,7 +235,6 @@ function Dashboard() {
 
       </div>
 
-      {/* --- User Profile Widget (Bottom Right) --- */}
       {user && (
           <div className='fixed bottom-5 right-5 flex items-center gap-3 bg-white p-3 rounded-xl shadow-lg border border-gray-200 z-50'>
             <img 

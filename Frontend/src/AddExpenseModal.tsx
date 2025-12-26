@@ -10,26 +10,21 @@ interface AddExpenseModalProps {
 }
 
 const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, groupMembers, onSubmit, currentUserId }) => {
-    // Form State
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState<number | ''>('');
     const [paidBy, setPaidBy] = useState(currentUserId);
     const [splitType, setSplitType] = useState<'EQUAL' | 'EXACT' | 'PERCENTAGE'>('EQUAL');
 
-    // Split State: Stores the value for each user (boolean for Equal, number for others)
     const [splits, setSplits] = useState<Record<string, number>>({});
 
-    // Reset form when opening
     useEffect(() => {
         if (isOpen) {
-            // Default: Everyone is included in Equal split
             const initialSplits: Record<string, number> = {};
             groupMembers.forEach(m => initialSplits[m.userId || m._id] = 1); // 1 = Checked/True
             setSplits(initialSplits);
         }
     }, [isOpen, groupMembers]);
 
-    // Helper: Calculate validation
     const validateSplit = () => {
         const total = Number(amount) || 0;
         const currentSum = Object.values(splits).reduce((a, b) => a + b, 0);
@@ -43,7 +38,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
         if (splitType === 'PERCENTAGE') {
             if (Math.abs(currentSum - 100) > 0.01) return `Total percentage: ${currentSum}% (must be 100%)`;
         }
-        return null; // No error
+        return null; 
     };
 
     const handleSave = () => {
@@ -53,7 +48,6 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
             return;
         }
 
-        // FORMAT DATA FOR BACKEND
         const finalSplits = groupMembers.map(member => {
             const id = member.userId || member._id;
             let memberAmount = 0;
@@ -61,7 +55,6 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
             const value = splits[id] || 0;
 
             if (splitType === 'EQUAL') {
-                // Count selected members
                 const selectedCount = Object.values(splits).filter(v => v === 1).length;
                 if (value === 1) memberAmount = Number(amount) / selectedCount;
             } else if (splitType === 'EXACT') {
@@ -72,16 +65,16 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
             }
 
             return {
-                user: member._id, // Backend needs the Mongo ID
+                user: member._id, 
                 amount: Number(memberAmount.toFixed(2)),
                 percentage: memberPercentage
             };
-        }).filter(s => s.amount > 0); // Remove people who owe 0
+        }).filter(s => s.amount > 0);
 
         onSubmit({
             description,
             amount: Number(amount),
-            paidBy, // We need to convert this to Mongo ID in the parent or send UUID
+            paidBy,
             splitType,
             splits: finalSplits
         });
@@ -93,15 +86,17 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
                 
-                {/* Header */}
                 <div className="bg-green-500 p-4 text-white flex justify-between items-center">
-                    <h2 className="text-xl font-bold">Add Expense</h2>
+                    <h2 className="text-xl font-bold" 
+                    onClick={()=>{
+
+                    }}
+                    >Add Expense</h2>
                     <button onClick={onClose} className="text-2xl font-bold">&times;</button>
                 </div>
 
                 <div className="p-6 max-h-[80vh] overflow-y-auto">
                     
-                    {/* Basic Info */}
                     <div className="mb-4">
                         <label className="block text-sm font-bold text-gray-700 mb-1">Description</label>
                         <input 
@@ -138,14 +133,13 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
                         </div>
                     </div>
 
-                    {/* Split Type Tabs */}
                     <div className="flex bg-gray-100 p-1 rounded-lg mb-4">
                         {['EQUAL', 'EXACT', 'PERCENTAGE'].map((type) => (
                             <button
                                 key={type}
                                 onClick={() => {
                                     setSplitType(type as any);
-                                    // Reset splits on type change for safety
+                                 
                                     const reset: any = {};
                                     groupMembers.forEach(m => reset[m.userId || m._id] = type === 'EQUAL' ? 1 : 0);
                                     setSplits(reset);
@@ -159,12 +153,12 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
                         ))}
                     </div>
 
-                    {/* Members List for Splitting */}
+                
                     <div className="space-y-3">
                         {groupMembers.map(member => {
                             const id = member.userId || member._id;
-                            const isIncluded = splits[id] === 1; // For Equal
-                            const val = splits[id] || 0; // For Exact/Percent
+                            const isIncluded = splits[id] === 1; 
+                            const val = splits[id] || 0; 
 
                             return (
                                 <div key={id} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded">
@@ -173,7 +167,6 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
                                         <span className="text-sm font-medium">{member.name}</span>
                                     </div>
 
-                                    {/* INPUTS BASED ON TYPE */}
                                     {splitType === 'EQUAL' && (
                                         <div className="flex items-center gap-2">
                                             <span className="text-sm text-gray-500">
@@ -217,7 +210,7 @@ const AddExpenseModal: React.FC<AddExpenseModalProps> = ({ isOpen, onClose, grou
                     </div>
                 </div>
 
-                {/* Footer */}
+        
                 <div className="p-4 border-t flex justify-end gap-3 bg-gray-50">
                     <button onClick={onClose} className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg">Cancel</button>
                     <button 

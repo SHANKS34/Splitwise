@@ -18,3 +18,18 @@ export interface Group {
     name: string;
     members: User[];
 }
+export interface MoneyRelation {
+    user: string;
+    amount: number;
+}
+
+export interface TransactionNode {
+    user: string;
+    moneyRelation: MoneyRelation[];
+}
+
+export interface GroupDetails extends Group {
+    totalAmount?: number;
+    balances: { user: string; amount: number }[];
+    transactions: TransactionNode[];
+}

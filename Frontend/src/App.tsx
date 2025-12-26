@@ -3,9 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Dashboard from './Dashboard'
 import Login from './Login'
 import Group from './Group';
-function App() {
-  // You don't need useNavigate here just to define routes
-  
+function App() {  
   return (
     <Routes>
       <Route path="/" element={<Login />} />

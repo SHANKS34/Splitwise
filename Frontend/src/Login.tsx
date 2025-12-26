@@ -17,16 +17,12 @@ function Login() {
         const token = query.get('token');
 
         if (token) {
-          // 1. Save Token
           localStorage.setItem('token', token);
           
-          // 2. Decode Token
           const decoded: UserData = jwtDecode(token);
           
-          // 3. Update State (for this component)
           setUser(decoded);
 
-          // 4. FIX: Save 'decoded' directly (not 'user') and use key 'user'
           localStorage.setItem('user', JSON.stringify(decoded));
           
           console.log("User Data Saved:", decoded);
